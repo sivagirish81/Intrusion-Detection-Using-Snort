@@ -1,0 +1,52 @@
+#my own rules written here
+
+#Alert when external network pings
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"We are being pinged!";icode:0; itype:8; sid: 10002;)
+
+#Alert when the ttl value of an icmp packet is above 100
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Bad TTL";ttl: >100;sid:10005;)
+
+#Alert when someone accesses ftp server
+#alert tcp $EXTERNAL_NET any -> $HOME_NET 21 (msg: "Incoming FTP connection"; flags:S; sid: 10001;)
+
+#Alert when someone checks robots.txt file
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg: "Accessing robots file";flow:to_server,established;content:"GET";http_method; content:"robots.txt";http_uri; nocase; sid: 10003;)
+
+#Alert when nmap fin scan
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg: "Nmap FIN scan"; flags:F;sid:10006; rev:1;)
+
+#Alert when nmap ping scan
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg: "Nmap Ping Scan"; dsize:0;sid:10007;rev:1;)
+
+#Alert when Nmap tcp scan
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg: "Nmap TCP Scan"; sid:10008; rev:2;)
+
+#Alert when Nmap Xmas scan
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg: "Nmap XMAS Scan"; flags:FPU;sid:10009;rev:1;)
+
+#Alert when Nmap Null scan
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg: "Nmap Null Scan";flags:0;sid:10010; rev:1;)
+
+#Alert when Nmap udp scan
+#alert udp $EXTERNAL_NET any -> $HOME_NET any (msg: "Nmap UDP Scan"; sid: 10011; rev:1;)
+
+#Alert when MITM is performed
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg: "Man in the Middle";icode:1; itype:5; classtype:bad-unknown; sid: 10012;) 
+
+#Alert when ping of death detected
+#alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg: "Ping of death detected"; dsize:>1000;itype:8;icode:0;detection_filter: track by_dst, count 40, seconds 5; sid: 10013;rev:1;)
+
+#Alert when teardrop is performed
+#alert ip $EXTERNAL_NET any -> $HOME_NET any (msg: "DOS Teardrop Attack"; fragbits:MDR;ip_proto:17;classtype:attempted-dos;sid: 10014;rev:3;) 
+
+#Alert when land attacks are performed
+#alert tcp $HOME_NET any -> $HOME_NET any (msg:"Land Attack"; flags:S;flow:stateless; detection_filter: track by_dst, count 70, seconds 10; classtype:attempted-dos; sid:10015;rev:1)
+
+#Alert when SYN flood are performed
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"SYN flood";flow:stateless; flags:S; detection_filter: track by_dst, count 20, seconds 10; sid:10016;rev:1;)
+
+#Alert when FIN flood are performed
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"FIN flood"; flags:F; flow:stateless; detection_filter: track by_dst, count 70, seconds 10; sid:10017;)
+
+#Alert when PUSH/ACK flood are performed
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"PUSH and ACK flood"; flags:P,A; flow:stateless; detection_filter: track by_dst, count 70, seconds 10; sid:10016;)
